@@ -1,0 +1,24 @@
+[package]
+name = "my_locationiq"
+version = "0.1.0"
+authors = ["Frank Avilés Sarmiento <heartoneto2012@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+# http(s) client
+hyper = "0.13.9"
+hyper-tls = "0.4.3"
+
+# serialization
+serde = {version = "1.0.114", features = ['derive']}
+serde_json = "1.0.56"
+serde_urlencoded = "0.6.1"
+
+# async executor
+tokio = {version = "0.2", features = ["full"]}
+
+# async extensions 
+futures = "0.3.8"
