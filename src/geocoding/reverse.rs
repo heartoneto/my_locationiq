@@ -4,29 +4,29 @@ use crate::osm_types::OsmType;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Address {
-    road: Option<String>,
-    suburb: Option<String>,
-    county: Option<String>,
-    region: Option<String>,
-    state: String,
-    postcode: String,
-    country: String,
-    country_code: String,
+    pub road: Option<String>,
+    pub suburb: Option<String>,
+    pub county: Option<String>,
+    pub region: Option<String>,
+    pub state: String,
+    pub postcode: String,
+    pub country: String,
+    pub country_code: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReverseResponse {
-    place_id: String,
-    licence: String,
-    osm_type: OsmType,
-    osm_id: String,
-    lat: String,
-    lon: String,
-    display_name: String,
-    address: Option<Address>,
-
-    boundingbox: [String; 4],
-    importance: Option<f32>,
+    pub place_id: Option<String>,
+    pub licence: Option<String>,
+    pub osm_type: Option<OsmType>,
+    pub osm_id: Option<String>,
+    pub lat: String,
+    pub lon: String,
+    pub display_name: Option<String>,
+    pub address: Option<Address>,
+    
+    pub boundingbox: [String; 4],
+    pub importance: Option<f32>,
 }
 
 #[cfg(test)]

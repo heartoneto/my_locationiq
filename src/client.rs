@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use hyper::{Body, Client};
 use hyper_tls::HttpsConnector;
 

@@ -2,8 +2,8 @@ pub mod reverse;
 
 use std::error::Error;
 
-use crate::Configuration;
 use crate::{common::ResponseFormat, geocoding::reverse::ReverseResponse};
+use crate::{general_request::make_https_url_encoded_request, Configuration};
 
 use hyper::{body::Buf, client::HttpConnector, Body, Client, Method, Request, Response, Uri};
 use hyper_tls::HttpsConnector;
@@ -18,6 +18,7 @@ impl<'a> GeoCodingApi<'a> {
         GeoCodingApi { conf, client }
     }
 
+    /// Format defaults to json if not given
     pub async fn reverse(
         &self,
         lat: f32,
@@ -34,42 +35,13 @@ impl<'a> GeoCodingApi<'a> {
             ("format", &end_format.to_string()),
         ];
 
-        let perc_enc = serde_urlencoded::to_string(params).unwrap();
-
-        // endpoint
-        let uri = Uri::builder()
-            .scheme("https")
-            .authority(self.conf.get_endpoint_str())
-            .path_and_query(format!("/v1/reverse.php?{}", perc_enc).as_str())
-            .build()
-            .unwrap();
-
-        // create the request
-        let rq: Request<Body> = Request::builder()
-            .method(Method::GET)
-            .uri(uri)
-            .body(Body::empty())
-            .unwrap();
-
-        // perform the request & wait for the response
-        let resp: Response<Body> = match self.client.request(rq).await {
-            Ok(val) => val,
-            Err(e) => return Err(Box::new(e)),
-        };
-
-        // get all chunks from the response body & store them
-        let buf = match hyper::body::to_bytes(resp).await {
-            Ok(b) => b,
-            Err(e) => return Err(Box::new(e)),
-        };
-
-        // parse the response as a json object
-        let res: ReverseResponse = match serde_json::from_slice(buf.bytes()) {
-            Ok(r) => r,
-            Err(e) => return Err(Box::new(e)),
-        };
-
-        Ok(res)
+        make_https_url_encoded_request(
+            params,
+            self.conf.get_endpoint_str(),
+            "/v1/reverse.php",
+            self.client,
+        )
+        .await
     }
 }
 
@@ -91,6 +63,6 @@ mod tests {
         .await;
         println!("{:?}", res);
 
-        assert!(res.is_ok());
+        assert!(false);
     }
 }

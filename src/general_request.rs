@@ -1,11 +1,8 @@
 use std::error::Error;
 
-use crate::Configuration;
-use crate::{common::ResponseFormat, geocoding::reverse::ReverseResponse};
-
 use hyper::{body::Buf, client::HttpConnector, Body, Client, Method, Request, Response, Uri};
 use hyper_tls::HttpsConnector;
-use serde::{de::DeserializeOwned, Deserialize};
+use serde::de::DeserializeOwned;
 
 pub(crate) async fn make_https_url_encoded_request<C>(
     params: &[(&str, &str)],
@@ -18,7 +15,7 @@ where
 {
     // get the percent encoding repr for the arguments
     let perc_enc = serde_urlencoded::to_string(params).unwrap();
-
+    
     // endpoint
     let uri = Uri::builder()
         .scheme("https")
@@ -26,6 +23,12 @@ where
         .path_and_query(format!("{}?{}", path, perc_enc).as_str())
         .build()
         .unwrap();
+
+    #[cfg(debug_assertions)]
+    {
+        println!("Request: {}", uri);
+    }
+
     // create the request
     let rq: Request<Body> = Request::builder()
         .method(Method::GET)
@@ -41,7 +44,13 @@ where
 
     // get all chunks from the response body & store them
     let buf = match hyper::body::to_bytes(resp).await {
-        Ok(b) => b,
+        Ok(b) => {        
+            #[cfg(debug_assertions)] {
+                println!("{:?}", b);
+            }
+
+            b
+        },
         Err(e) => return Err(Box::new(e)),
     };
 
